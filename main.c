@@ -13,9 +13,10 @@ typedef unsigned char byte;
 typedef unsigned int uint;
 typedef struct Computer comp_t;
 
-
+//--------------- Helper functions ------------
 char *multichar(const char symbol, uint count)
 {
+    /* duplicating a character a given number of times */
     char *res_str = malloc((count * sizeof(char)) + 1);
 
     for (uint c = 0; c < count; c++)
@@ -25,6 +26,7 @@ char *multichar(const char symbol, uint count)
 
 char *strcenter(char *string, int stretch)
 {
+	/* centering helper function */
 
     int dest_len = strlen(string);
     int len_of_side = round((float)((stretch - dest_len) / 2));
@@ -44,6 +46,10 @@ char *strcenter(char *string, int stretch)
 
 int op_casecmp(const char *_operator, const char *options[])
 {
+    /*
+     function that compares operator entered
+     by the user and each of the available options
+    */
     const int num_options = 4;
     for (int c = 0; c < num_options; c++)
         if (!strcmp(_operator, options[c]))
@@ -53,6 +59,10 @@ int op_casecmp(const char *_operator, const char *options[])
 
 void print_binary(byte value)
 {
+    /*
+      print the binary representation
+      of an unsigned character or byte
+    */
     for (int i = 0; i < 8; i++)
     {
         printf("%c", (value & 0x80) ? '1' : '0');
@@ -79,6 +89,7 @@ typedef struct Computer
 
 } comp_t;
 
+// initializing of computer
 comp_t *_init()
 {
     comp_t *Computer_new = malloc(sizeof(comp_t));
@@ -91,6 +102,7 @@ comp_t *_init()
 
 }
 
+// free of computer memory
 void _destroy(comp_t *computer)
 {
     free(computer->mem);
@@ -98,6 +110,7 @@ void _destroy(comp_t *computer)
     free(computer);
 }
 
+// mathematical operation of addition and subtraction
 void Computer_ALU(comp_t *computer, char operation)
 {
     byte result;
@@ -113,6 +126,7 @@ void Computer_ALU(comp_t *computer, char operation)
     computer->regR = result;
 }
 
+// command "ДЗ"
 void Computer_load_value(comp_t *computer, int cell_adress)
 {
     if (cell_adress >= 0 && cell_adress < 16)
@@ -122,6 +136,7 @@ void Computer_load_value(comp_t *computer, int cell_adress)
     }
 }
 
+// command "ПЗ"
 void Computer_store_value(comp_t *computer, int to_adress)
 {
     if (to_adress >= 0 && to_adress < 16)
@@ -129,6 +144,7 @@ void Computer_store_value(comp_t *computer, int to_adress)
     else error("сохранение значения в несуществующую ячейку памяти");
 }
 
+// command "ДД"
 void Computer_immed_value(comp_t *computer, int value)
 {
     if (value > 0 && value < 16)
@@ -136,6 +152,7 @@ void Computer_immed_value(comp_t *computer, int value)
     Computer_ALU(computer, '+');
 }
 
+// command "ПК" and "ОО"
 void Computer_operation_to_regR(comp_t *computer, int adress, char operation)
 {
     if (adress >= 0 && adress < 16)
@@ -147,6 +164,7 @@ void Computer_operation_to_regR(comp_t *computer, int adress, char operation)
     else error("обращение за приделы памяти");
 }
 
+// show the state of computer registers
 void display(comp_t *computer)
 {
     printf("%s\n\n Рег.А: ", strcenter("КОРЕНЬЯ 1.0\n", 48));
@@ -159,6 +177,7 @@ void display(comp_t *computer)
            "Для просмотра содержания памяти - ХР (ХРанилище)");
 }
 
+// displaying the contents of the computer's memory
 void show_storage(comp_t *computer)
 {
     for (int i = 0; i < 16; i++)
@@ -170,6 +189,7 @@ void show_storage(comp_t *computer)
     getch();
 }
 
+// help command with description of commands
 void comm_list()
 {
     char *commands[] = {
@@ -200,6 +220,10 @@ void comm_list()
 
 void parse_line(comp_t *computer)
 {
+    /*
+      parsing of computer->comm_line
+      and executing necessary task
+    */
     char _operator[5],
          *comment_ptr;
     int _adress;
@@ -242,7 +266,7 @@ int main()
     comp_t *mycomp = _init();
     //set_utf8(); –> is not necessary on Linux
 
-    while(1)
+    while(true)
     {
         display(mycomp);
         printf("\n> ");
